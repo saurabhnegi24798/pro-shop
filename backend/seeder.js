@@ -1,17 +1,16 @@
-const mongoose = require("mongoose")
-const dotenv = require("dotenv")
-const colors = require("colors")
-const users = require("./data/users")
-const products = require("./data/products")
-const User = require("./models/userModel")
-const Product = require("./models/productModel")
-const Order = require("./models/orderModel")
+import mongoose from 'mongoose'
+import dotenv from 'dotenv'
+import colors from 'colors'
+import users from './data/users.js'
+import products from './data/products.js'
+import User from './models/userModel.js'
+import Product from './models/productModel.js'
+import Order from './models/orderModel.js'
+import connectDB from './config/db.js'
 
-const connectDb = require("./config/db")
+dotenv.config()
 
-dotenv.config({ path: `${__dirname}/.env` })
-
-connectDb()
+connectDB()
 
 const importData = async () => {
   try {
@@ -20,6 +19,7 @@ const importData = async () => {
     await User.deleteMany()
 
     const createdUsers = await User.insertMany(users)
+
     const adminUser = createdUsers[0]._id
 
     const sampleProducts = products.map((product) => {
@@ -27,10 +27,11 @@ const importData = async () => {
     })
 
     await Product.insertMany(sampleProducts)
-    console.log("data added".green.inverse)
+
+    console.log('Data Imported!'.green.inverse)
     process.exit()
-  } catch (err) {
-    console.log(`${err}`.red.inverse)
+  } catch (error) {
+    console.error(`${error}`.red.inverse)
     process.exit(1)
   }
 }
@@ -41,15 +42,15 @@ const destroyData = async () => {
     await Product.deleteMany()
     await User.deleteMany()
 
-    console.log("data destroyed".red.inverse)
+    console.log('Data Destroyed!'.red.inverse)
     process.exit()
-  } catch (err) {
-    console.log(`${err}`.red.inverse)
+  } catch (error) {
+    console.error(`${error}`.red.inverse)
     process.exit(1)
   }
 }
 
-if (process.argv[2] === "-d") {
+if (process.argv[2] === '-d') {
   destroyData()
 } else {
   importData()
