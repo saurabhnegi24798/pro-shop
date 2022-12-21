@@ -18,32 +18,23 @@ const PlaceOrderScreen = ({ history }) => {
   } else if (!cart.paymentMethod) {
     history.push('/payment')
   }
-  //   Calculate prices
-  const addDecimals = (num) => {
-    return (Math.round(num * 100) / 100).toFixed(2)
-  }
 
-  cart.itemsPrice = addDecimals(
-    cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)
-  )
-  cart.shippingPrice = addDecimals(cart.itemsPrice > 100 ? 0 : 100)
+  const addDecimals = (num) => { return (Math.round(num * 100) / 100).toFixed(2) }
+
+  cart.itemsPrice = addDecimals(cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0))
+  cart.shippingPrice = addDecimals(cart.itemsPrice > 100.00 ? 0.00 : 100.00)
   cart.taxPrice = addDecimals(Number((0.15 * cart.itemsPrice).toFixed(2)))
-  cart.totalPrice = (
-    Number(cart.itemsPrice) +
-    Number(cart.shippingPrice) +
-    Number(cart.taxPrice)
-  ).toFixed(2)
+  cart.totalPrice = addDecimals(Number(cart.itemsPrice) + Number(cart.shippingPrice) + Number(cart.taxPrice))
 
   const orderCreate = useSelector((state) => state.orderCreate)
   const { order, success, error } = orderCreate
 
   useEffect(() => {
     if (success) {
-      history.push(`/order/${order._id}`)
       dispatch({ type: USER_DETAILS_RESET })
       dispatch({ type: ORDER_CREATE_RESET })
+      history.push(`/order/${order._id}`)
     }
-    // eslint-disable-next-line
   }, [history, success])
 
   const placeOrderHandler = () => {
@@ -87,31 +78,31 @@ const PlaceOrderScreen = ({ history }) => {
               {cart.cartItems.length === 0 ? (
                 <Message>Your cart is empty</Message>
               ) : (
-                <ListGroup variant='flush'>
-                  {cart.cartItems.map((item, index) => (
-                    <ListGroup.Item key={index}>
-                      <Row>
-                        <Col md={1}>
-                          <Image
-                            src={item.image}
-                            alt={item.name}
-                            fluid
-                            rounded
-                          />
-                        </Col>
-                        <Col>
-                          <Link to={`/product/${item.product}`}>
-                            {item.name}
-                          </Link>
-                        </Col>
-                        <Col md={4}>
-                          {item.qty} x ${item.price} = ${item.qty * item.price}
-                        </Col>
-                      </Row>
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
-              )}
+                  <ListGroup variant='flush'>
+                    {cart.cartItems.map((item, index) => (
+                      <ListGroup.Item key={index}>
+                        <Row>
+                          <Col md={1}>
+                            <Image
+                              src={item.image}
+                              alt={item.name}
+                              fluid
+                              rounded
+                            />
+                          </Col>
+                          <Col>
+                            <Link to={`/product/${item.product}`}>
+                              {item.name}
+                            </Link>
+                          </Col>
+                          <Col md={4}>
+                            {item.qty} x ${item.price} = ${item.qty * item.price}
+                          </Col>
+                        </Row>
+                      </ListGroup.Item>
+                    ))}
+                  </ListGroup>
+                )}
             </ListGroup.Item>
           </ListGroup>
         </Col>
