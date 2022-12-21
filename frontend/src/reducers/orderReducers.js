@@ -55,7 +55,6 @@ export const orderDetailsReducer = (state = { loading: false, order: { orderItem
         loading: true,
       }
     case ORDER_DETAILS_SUCCESS:
-      // console.log('I am inside orderDetailsReducer ', action.payload);
       return {
         loading: false,
         order: action.payload,
